@@ -1,0 +1,21 @@
+{
+  "plugins": [
+    "jest",
+    "security"
+  ],
+  "extends": [
+    "airbnb/base",
+    "plugin:jest/recommended",
+    "plugin:security/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2022
+  },
+  "rules": {
+    "no-param-reassign": "off" // !!
+    // "security/detect-object-injection": "off", // !!!
+  },
+  "ignorePatterns": [
+    "node_modules"
+  ]
+}
