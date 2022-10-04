@@ -9,36 +9,12 @@ const expressPino = require('express-pino-logger');
 
 const logicAbc = require('recon-logic-abc');
 
-const config = require('./config');
-const logger = require('./logger');
-const apiUtil = require('./api-utils');
-const { name, version } = require('../package.json');
+const api = require('./utils/api');
+const config = require('./config/app');
+const logger = require('./utils/logger');
+const pinoConf = require('./config/pino');
 
 const app = express();
-
-logicAbc.bind({
-  logger,
-  config,
-});
-
-app.use(expressPino({
-  logger,
-  serializers: {
-    req: (req) => ({
-      method: req.method,
-      url: req.url,
-      remoteAddress: req.remoteAddress,
-      remotePort: req.remotePort,
-    }),
-    res: (res) => ({
-      statusCode: res.statusCode,
-    }),
-    err: (err) => ({
-      type: err.type,
-      message: err.message,
-    }),
-  },
-}));
 
 app.use(cors());
 app.options('*', cors());
@@ -48,23 +24,18 @@ app.use(helmet());
 app.use(compression());
 app.use(express.json());
 
-app.use(express.urlencoded({
-  extended: true,
-}));
+app.use(expressPino({ logger, ...pinoConf }));
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-  res.status(200).send({ name, version });
+logicAbc.bind({
+  logger,
+  config,
 });
 
 app.use('/logic-abc', logicAbc.router);
 
-app.use('*', (req, res) => {
-  res.status(404).json({
-    statusCode: 404,
-    message: 'Nof Found!',
-  });
-});
-
-app.use(apiUtil.errHandler);
+app.get('/', api.rootHandler);
+app.use('*', api.notFoundHandler);
+app.use(api.errHandler);
 
 module.exports = app;

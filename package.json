@@ -30,6 +30,7 @@
     "pino": "^8.6.1",
     "pino-pretty": "^9.1.0",
     "recon-logic-abc": "github:edgracilla/recon-logic-abc",
+    "sequelize": "^6.23.2",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {

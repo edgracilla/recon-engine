@@ -1,12 +1,16 @@
 const app = require('./src/app');
-const config = require('./src/config');
-const logger = require('./src/logger');
+const config = require('./src/config/app');
+const logger = require('./src/utils/logger');
 
 const server = app.listen(config.port, () => {
   logger.info(`Listening to port ${config.port}`);
 });
 
-const exitHandler = () => {
+const exitHandler = (err) => {
+  if (err) {
+    logger.error(err);
+  }
+
   if (server) {
     server.close(() => {
       logger.info('Server closed');
